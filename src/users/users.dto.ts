@@ -7,5 +7,10 @@ export interface IUsersDto {
      password_hash: string;
      phone: string;
      type: typeUser;
-     create_at: Date;     
+     create_at?: Date;    
+}
+
+export interface ILoginDto {
+     email: string;
+     password: string;
 }

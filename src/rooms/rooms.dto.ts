@@ -7,4 +7,6 @@ export interface IRoomsDto {
     taxes: number;
     location: string;
     status: StatusRooms;
+    id_hotel: string;
+    number_room: number;
 }
