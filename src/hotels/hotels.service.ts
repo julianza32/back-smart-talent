@@ -3,8 +3,7 @@ import { InjectModel } from '@nestjs/azure-database';
 import { Hotels } from './hotels.entity';
 import { Container } from '@azure/cosmos';
 import { IHotelsDto } from './hotels.dto';
-import { v4 as uuidv4 } from 'uuid'; 
-
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class HotelsService {
@@ -47,25 +46,33 @@ export class HotelsService {
     }
   }
 
-  async updateHotel(id: string, hotelData: IHotelsDto): Promise<IHotelsDto | null> {
-    const { name, location, is_active, created_by } = hotelData;
-    const { resource } = await this.hotelsContainer.item(id, id).read();
+  async updateHotel(
+    id: string,
+    hotelData: IHotelsDto,
+  ): Promise<IHotelsDto | null> {
+    const { resource: existingHotel } = await this.hotelsContainer
+      .item(id, id)
+      .read();
 
-    if (!resource) return null;
+    if (!existingHotel) return null;
 
     const updatedHotel = {
-      id,
-      name: name ?? resource.name,
-      location: location ?? resource.location,
-      is_active: is_active ?? resource.is_active,
-      created_by: created_by ?? resource.created_by,
+      ...existingHotel,
+      ...hotelData,
     };
 
-    await this.hotelsContainer.item(id, id).replace(updatedHotel);
+    const { resource } = await this.hotelsContainer
+      .item(id, id)
+      .replace(updatedHotel);
 
-    return updatedHotel;
+    return {
+      id: resource.id,
+      name: resource.name,
+      location: resource.location,
+      is_active: resource.is_active,
+      created_by: resource.created_by,
+    };
   }
-
 
   async deleteHotel(id: string): Promise<boolean> {
     const { resource } = await this.hotelsContainer.item(id, id).delete();
@@ -73,7 +80,9 @@ export class HotelsService {
   }
 
   async getHotelById(hotelId: string): Promise<IHotelsDto | null> {
-    const { resource } = await this.hotelsContainer.item(hotelId, hotelId).read();
+    const { resource } = await this.hotelsContainer
+      .item(hotelId, hotelId)
+      .read();
     if (!resource) return null;
     return {
       id: resource.id,
@@ -84,9 +93,13 @@ export class HotelsService {
     };
   }
 
-  async toggleHotelStatus (hotelId: string, status: string): Promise<IHotelsDto | null> {
-   
-   const { resource } = await this.hotelsContainer.item(hotelId, hotelId).patch( [{ op: "set", path: "/is_active", value: status }])
+  async toggleHotelStatus(
+    hotelId: string,
+    status: string,
+  ): Promise<IHotelsDto | null> {
+    const { resource } = await this.hotelsContainer
+      .item(hotelId, hotelId)
+      .patch([{ op: 'set', path: '/is_active', value: status }]);
     return {
       id: resource.id,
       name: resource.name,
@@ -94,7 +107,5 @@ export class HotelsService {
       is_active: resource.is_active,
       created_by: resource.created_by,
     };
-
-}
-
+  }
 }
