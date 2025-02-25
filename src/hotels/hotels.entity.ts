@@ -7,4 +7,5 @@ export class Hotels {
     location: string;
     is_active: boolean;
     created_by: string; 
+    details: string;
 }

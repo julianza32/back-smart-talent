@@ -8,5 +8,6 @@ export interface IRoomsDto {
     location: string;
     status: StatusRooms;
     id_hotel: string;
+    details: string;
     number_room: number;
 }

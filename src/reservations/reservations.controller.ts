@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { IReservationsDto } from './reservations.dto';
 import { Guests } from 'src/guests/guests.entity';
@@ -9,6 +9,10 @@ export class ReservationsController {
 
   @Get('all')//
   async getReservations() {
+    return this.reservationsService.getReservationsAllDetails();
+  }
+  @Get('')//
+  async getReservationsAll() {
     return this.reservationsService.getAllReservations();
   }
   @Get(':id')//
@@ -17,7 +21,7 @@ export class ReservationsController {
   }
   @Get('by-user/:id')//
   async getReservationsByUser(@Param('id') id: string) {
-    return this.reservationsService.getReservationsByUserId(id);
+    return this.reservationsService.getReservationsByUserIdWithDetails(id);
   }
   @Get('by-hotel/:id')//
   async getReservationsByHotel(@Param('id') id: string) {
@@ -50,4 +54,12 @@ export class ReservationsController {
   ) {
     return this.reservationsService.changeStatusReservation(id, status);
   } 
+  @Get('details/:id')//
+  async getReservationDetailsById(@Param('id') id: string) {
+    return this.reservationsService.getReservationWithDetails(id);
+  }
+  @Delete('delete/:id')//
+  async deleteReservation(@Param('id') id: string) {
+    return this.reservationsService.deleteReservation(id);
+  }
 }

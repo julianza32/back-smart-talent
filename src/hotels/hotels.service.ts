@@ -22,6 +22,7 @@ export class HotelsService {
       location: hotel.location,
       is_active: hotel.is_active,
       created_by: hotel.created_by,
+      details: hotel.details,
     }));
   }
 
@@ -40,6 +41,7 @@ export class HotelsService {
         location: resource!.location,
         is_active: resource!.is_active,
         created_by: resource!.created_by,
+        details: resource!.details,
       };
     } catch (error) {
       return null;
@@ -71,6 +73,7 @@ export class HotelsService {
       location: resource.location,
       is_active: resource.is_active,
       created_by: resource.created_by,
+      details: resource.details,
     };
   }
 
@@ -90,6 +93,7 @@ export class HotelsService {
       location: resource.location,
       is_active: resource.is_active,
       created_by: resource.created_by,
+      details: resource.details,
     };
   }
 
@@ -106,6 +110,7 @@ export class HotelsService {
       location: resource.location,
       is_active: resource.is_active,
       created_by: resource.created_by,
+      details: resource.details,
     };
   }
 }

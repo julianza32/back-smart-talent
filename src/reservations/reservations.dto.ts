@@ -10,5 +10,15 @@ export interface IReservationsDto {
   checkOut: string;
   guests: Guests[];
   emergencyContact: EmergencyContact;
-  status: 'confirmed' | 'pending' | 'canceled';
+  status: 'Confirmada' | 'Pendiente' | 'Cancelada';
+}
+
+export interface IReservationsDetailDto {
+  checkIn: string;
+  checkOut: string;
+  guests: Guests[];
+  name_hotel: string;
+  number_room: number;
+  emergencyContact: EmergencyContact;
+  status: 'Confirmada' | 'Pendiente' | 'Cancelada';
 }

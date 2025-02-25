@@ -1,15 +1,23 @@
 import { InjectModel } from '@nestjs/azure-database';
 import { Injectable } from '@nestjs/common';
-import { Reservations } from './reservations.entity';
+import { Reservations, ReservationsDetail } from './reservations.entity';
 import { Container } from '@azure/cosmos';
-import { IReservationsDto } from './reservations.dto';
+import { IReservationsDetailDto, IReservationsDto } from './reservations.dto';
 import e from 'express';
 import { Guests } from 'src/guests/guests.entity';
+import { IRoomsDto } from 'src/rooms/rooms.dto';
+import { IHotelsDto } from 'src/hotels/hotels.dto';
+import { Hotels } from 'src/hotels/hotels.entity';
+import { Rooms } from 'src/rooms/rooms.entity';
+import { HotelsService } from 'src/hotels/hotels.service';
+import { RoomsService } from 'src/rooms/rooms.service';
 
 @Injectable()
 export class ReservationsService {
   constructor(
     @InjectModel(Reservations) private readonly reservationContainer: Container,
+    private readonly hotelsService: HotelsService,
+    private readonly roomsService: RoomsService,
   ) {}
 
   async createReservation(
@@ -68,7 +76,6 @@ export class ReservationsService {
     };
   }
 
-
   async getReservationById(
     reservationId: string,
   ): Promise<IReservationsDto | null> {
@@ -90,7 +97,54 @@ export class ReservationsService {
     };
   }
 
-  getReservationsByUserId(userId: string): Promise<IReservationsDto[]> {
+  async getReservationWithDetails(reservationId: string): Promise<{}> {
+    const reservation = await this.getReservationById(reservationId);
+    console.log(reservation);
+
+    const hotel = await this.hotelsService.getHotelById(
+      reservation?.hotelId ?? '',
+    );
+    const room = await this.roomsService.getRoomById(reservation?.roomId ?? '');
+    return { reservation, hotel, room };
+  }
+
+  async getReservationsAllDetails(): Promise<ReservationsDetail[]> {
+    const reservations = await this.getAllReservations();
+
+    const reservationsWithDetails = await Promise.all(
+      reservations.map(async (reservation) => {
+        if (!reservation.hotelId) {
+          console.error('Hotel ID is missing:', reservation);
+          return null;
+        }
+        if (!reservation.roomId) {
+          console.error('Room ID is missing:', reservation);
+          return null;
+        }
+
+        const hotel = await this.hotelsService.getHotelById(
+          reservation.hotelId,
+        );
+        const room = await this.roomsService.getRoomById(reservation.roomId);
+
+        const reservationWithDetails = {
+          id: reservation.id,
+          checkIn: reservation.checkIn,
+          checkOut: reservation.checkOut,
+          guests: reservation.guests,
+          name_hotel: hotel ? hotel.name : 'Desconocido',
+          number_room: room ? room.number_room : 0,
+          emergencyContact: reservation.emergencyContact,
+          status: reservation.status,
+        };
+
+        return reservationWithDetails;
+      }),
+      
+    );
+    return reservationsWithDetails.filter((detail): detail is ReservationsDetail => detail !== null);
+  }
+  async getReservationsByUserId(userId: string): Promise<IReservationsDto[]> {
     const querySql = 'SELECT * FROM c WHERE c.userId = @userId',
       parameters = [{ name: '@userId', value: userId }];
 
@@ -110,6 +164,20 @@ export class ReservationsService {
           status: reservation.status,
         })),
       );
+  }
+
+  async getReservationsByUserIdWithDetails(userId: string): Promise<{}[]> {
+    const reservations = await this.getReservationsByUserId(userId);
+    const reservationsWithDetails = await Promise.all(
+      reservations.map(async (reservation) => {
+        const hotel = await this.hotelsService.getHotelById(
+          reservation.hotelId,
+        );
+        const room = await this.roomsService.getRoomById(reservation.roomId);
+        return { reservation, hotel, room };
+      }),
+    );
+    return reservationsWithDetails;
   }
 
   async getReservationsByHotelId(hotelId: string): Promise<IReservationsDto[]> {
@@ -166,7 +234,7 @@ export class ReservationsService {
       .replace(reservationUpdated);
     return {
       guests: resource!.guests,
-    }
+    };
   }
   async changeStatusReservation(id: string, status: string) {
     const { resource } = await this.reservationContainer
@@ -184,7 +252,13 @@ export class ReservationsService {
       checkOut: resource.checkOut,
       guests: resource.guests,
       emergencyContact: resource.emergencyContact,
-      status: resource.status
+      status: resource.status,
     };
+  }
+
+  async deleteReservation(id: string): Promise<boolean> {
+    const { resource } = await this.reservationContainer.item(id, id).delete();
+
+    return !resource;
   }
 }

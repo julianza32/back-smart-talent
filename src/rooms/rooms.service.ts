@@ -24,7 +24,8 @@ export class RoomsService {
             location: room.location,
             status: room.status,    
             id_hotel: room.id_hotel,
-            number_room: room.number_room
+            number_room: room.number_room,
+            details: room.details
         }));
     }
 
@@ -45,7 +46,8 @@ export class RoomsService {
                 location: resource!.location,
                 status: resource!.status,
                 id_hotel: resource!.id_hotel,
-                number_room: resource!.number_room
+                number_room: resource!.number_room,
+                details: resource!.details
             };
         } catch (error) {
             return null;
@@ -68,8 +70,8 @@ export class RoomsService {
             location: updatedResource!.location,
             status: updatedResource!.status,
             id_hotel: updatedResource!.id_hotel,
-            number_room: updatedResource!.number_room
-
+            number_room: updatedResource!.number_room,
+            details: updatedResource!.details,
         };
     }
 
@@ -90,7 +92,8 @@ export class RoomsService {
             location: resource.location,
             status: resource.status,
             id_hotel: resource.id_hotel,
-            number_room: resource.number_room
+            number_room: resource.number_room,
+            details: resource.details
         };
     }
 
@@ -108,7 +111,8 @@ export class RoomsService {
             location: room.location,
             status: room.status,
             id_hotel: room.id_hotel,
-            number_room: room.number_room
+            number_room: room.number_room,
+            details: room.details
         }));
     }
     async getRoomsByType(type: string): Promise<IRoomsDto[]> {
@@ -125,7 +129,8 @@ export class RoomsService {
             location: room.location,
             status: room.status,
             id_hotel: room.id_hotel,
-            number_room: room.number_room
+            number_room: room.number_room,
+            details: room.details
         }));
     }
 
@@ -143,7 +148,8 @@ export class RoomsService {
             location: room.location,
             status: room.status,
             id_hotel: room.id_hotel,
-            number_room: room.number_room
+            number_room: room.number_room,
+            details: room.details
         }));
     }
 }

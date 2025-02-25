@@ -10,6 +10,7 @@ export class Rooms {
         location: string;
         status: StatusRooms;
         id_hotel: string;
+        details: string;
         number_room: number;
 }
 export class TypeRooms {

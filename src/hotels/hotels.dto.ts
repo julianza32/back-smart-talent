@@ -4,4 +4,5 @@ export interface IHotelsDto {
     location: string;
     is_active: boolean;
     created_by: string; 
+    details: string;
 }
