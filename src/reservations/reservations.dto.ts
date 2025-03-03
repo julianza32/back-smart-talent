@@ -19,6 +19,7 @@ export interface IReservationsDetailDto {
   guests: Guests[];
   name_hotel: string;
   number_room: number;
+  id_room: string;
   emergencyContact: EmergencyContact;
   status: 'Confirmada' | 'Pendiente' | 'Cancelada';
 }

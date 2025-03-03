@@ -30,5 +30,6 @@ export interface ReservationsDetail {
   name_hotel: string;
   number_room: number;
   emergencyContact: EmergencyContact;
+  id_room: string;
   status: 'Confirmada' | 'Pendiente' | 'Cancelada';
 }

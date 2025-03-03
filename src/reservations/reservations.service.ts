@@ -29,7 +29,7 @@ export class ReservationsService {
       let reservation = new Reservations();
       reservation.id = id;
       const newReservation = { ...reservation, ...restReservationData };
-
+      this.roomsService.toggleRoomStatus(reservationData.roomId, 'Deshabilitada');
       const { resource } =
         await this.reservationContainer.items.create(newReservation);
       return {
@@ -135,6 +135,7 @@ export class ReservationsService {
           name_hotel: hotel ? hotel.name : 'Desconocido',
           number_room: room ? room.number_room : 0,
           emergencyContact: reservation.emergencyContact,
+          id_room: reservation.roomId,
           status: reservation.status,
         };
 

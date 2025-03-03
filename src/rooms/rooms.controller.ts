@@ -29,10 +29,15 @@ export class RoomsController {
         return this.roomsService.getRoomById(id);
     }
 
+    @Get('get-by-hotel/enabled/:id')//
+    async getRoomsByHotelEnabled(@Param('id') id: string): Promise<IRoomsDto[]> {
+        return this.roomsService.getRoomsByHotelIdEnabled(id);
+    }
     @Get('get-by-hotel/:id')//
     async getRoomsByHotel(@Param('id') id: string): Promise<IRoomsDto[]> {
         return this.roomsService.getRoomsByHotelId(id);
     }
+
     @Get('get-by-type/:type')//
     async getRoomsByType(@Param('type') type: string): Promise<IRoomsDto[]> {
         return this.roomsService.getRoomsByType(type);
@@ -40,5 +45,9 @@ export class RoomsController {
     @Get('get-by-status/:status')//
     async getRoomsByStatus(@Param('status') status: string): Promise<IRoomsDto[]> {
         return this.roomsService.getRoomsByStatus(status);
+    }
+    @Post('toggle-status/:id/:status')//
+    async toggleRoomStatus(@Param('id') id: string, @Param('status') status: string): Promise<IRoomsDto | null> {
+        return this.roomsService.toggleRoomStatus(id, status);
     }
 }
